@@ -1,0 +1,30 @@
+# Site settings
+title: "alloc(my_mind)"
+email: mgattozzi@gmail.com
+description: "Personal musings and coding"
+baseurl: ""
+url: "https://mgattozzi.github.io"
+title_description: ""
+title_image: "https://secure.gravatar.com/avatar/9a9483c10620e6d005eee183e3479f1e"
+google_analytics: "UA-38312845-2"
+disqus_account: mgattozzi
+github_repository: https://github.com/mgattozzi/mgattozzi.github.io
+addthis_id: ra-5585bbce13b7da7c
+post_limit: 5
+
+# Social usernames/URLs
+twitter_username: mgattozzi
+github_username:  mgattozzi
+linkedin_link: https://www.linkedin.com/in/mgattozzi
+google_plus_link: https://plus.google.com/+MichaelGattozzi/
+stackoverflow_link: https://stackoverflow.com/users/2698054/mgattozzi?tab=profile
+
+# Footer
+footer_left: "Made with carte-noire theme by <a href=\"https://twitter.com/_JacobTomlinson\">Jacob Tomlinson</a>"
+footer_right: "&lt;/&gt; on <a href=\"https://github.com/jacobtomlinson/carte-noire\">Github</a> &nbsp;<i class=\"fa fa-github-alt\"></i>"
+
+# Build settings
+markdown: rdiscount
+highlighter: pygments
+permalink: pretty
+exclude: [vendor]
