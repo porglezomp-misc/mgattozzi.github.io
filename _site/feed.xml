@@ -5,15 +5,13 @@
     <description>Personal musings and coding</description>
     <link>https://mgattozzi.github.io/</link>
     <atom:link href="https://mgattozzi.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 20 Jun 2015 16:27:45 -0400</pubDate>
-    <lastBuildDate>Sat, 20 Jun 2015 16:27:45 -0400</lastBuildDate>
+    <pubDate>Sat, 20 Jun 2015 16:29:42 -0400</pubDate>
+    <lastBuildDate>Sat, 20 Jun 2015 16:29:42 -0400</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
         <title>Rusty</title>
-        <description>&lt;h1&gt;Rusty&lt;/h1&gt;
-
-&lt;p&gt;Over the past few weeks I&#39;ve had the great pleasure of working on my own shell
+        <description>&lt;p&gt;Over the past few weeks I&#39;ve had the great pleasure of working on my own shell
 in the Rust language. It&#39;s been exciting to work on and I&#39;ve learned a lot
 about the language including monadic error handling (something I wasn&#39;t forced
 to use in Haskell if I didn&#39;t want too) as well as the concept of ownership
@@ -107,8 +105,6 @@ it does present a good look at what the rust language has to offer.&lt;/p&gt;
         <pubDate>Sat, 20 Jun 2015 11:08:00 -0400</pubDate>
         <link>https://mgattozzi.github.io/rust/2015/06/20/Rusty/</link>
         <guid isPermaLink="true">https://mgattozzi.github.io/rust/2015/06/20/Rusty/</guid>
-        
-        <category>demo</category>
         
         <category>example</category>
         
