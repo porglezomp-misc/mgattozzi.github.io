@@ -5,8 +5,8 @@
     <description>Personal musings and coding</description>
     <link>https://mgattozzi.github.io/</link>
     <atom:link href="https://mgattozzi.github.io/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Sat, 20 Jun 2015 16:29:42 -0400</pubDate>
-    <lastBuildDate>Sat, 20 Jun 2015 16:29:42 -0400</lastBuildDate>
+    <pubDate>Wed, 24 Jun 2015 22:05:44 -0400</pubDate>
+    <lastBuildDate>Wed, 24 Jun 2015 22:05:44 -0400</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -107,6 +107,76 @@ it does present a good look at what the rust language has to offer.&lt;/p&gt;
         <guid isPermaLink="true">https://mgattozzi.github.io/rust/2015/06/20/Rusty/</guid>
         
         <category>example</category>
+        
+        <category>shell</category>
+        
+        <category>rust</category>
+        
+        
+        <category>rust</category>
+        
+      </item>
+    
+      <item>
+        <title>Piping So Much I Swear I&#39;m Mario</title>
+        <description>&lt;p&gt;As you might know I&#39;m working on shell that you can find the source code for &lt;a href=&quot;https://github.com/mgattozzi/Rusty&quot;&gt;here&lt;/a&gt;.
+I&#39;ve been trying to implement pipes for the longest time and just have never
+gotten them to work in Rust for whatever reason. I detail that in &lt;a href=&quot;https://www.reddit.com/r/rust/comments/3azfie/how_to_pipe_one_process_into_another/&quot;&gt;post&lt;/a&gt; I put
+in the rust subreddit today. I even managed to find a solution for it today
+though it does use an unsafe block which I&#39;m not exactly happy about but for
+now it works until I find a safer way to do this. Here&#39;s the code:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span class=&quot;kn&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;super&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AsRawFd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;use&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FromRawFd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;cp&quot;&gt;#[test]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pipes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(){&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;//The stdout function makes sure that ouput&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;//is piped and a child process is spawned&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;//so that the right conversions can take &lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;//place in the following unsafe block&lt;/span&gt;
+        &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cmd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Command&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;ls&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;/&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Stdio&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;piped&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt; 
+                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;spawn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;         
+        &lt;span class=&quot;k&quot;&gt;unsafe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; 
+            &lt;span class=&quot;c1&quot;&gt;//Makes cmd into a raw fd that the Stdio &lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;//struct can read from and then make it &lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;//act as the input for the command that&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;//is executed.&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cmd2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Command&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;grep&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;etc&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stdin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Stdio&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_raw_fd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cmd&lt;/span&gt; 
+                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unwrap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;                
+                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stdout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unwrap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;         
+                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;as_raw_fd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()))&lt;/span&gt;         
+                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;      
+            &lt;span class=&quot;n&quot;&gt;assert_eq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;etc&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_stdout&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cmd2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;trim&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;());&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This was a test so using ok() and unwrap() is alright as I know what the inputs
+are though I would suggest that not being the case usually. I still have some
+places in my own code where I need to clean that up but did this so that
+I could get it working as a proof of concept.&lt;/p&gt;
+
+&lt;h3&gt;Conclusion&lt;/h3&gt;
+
+&lt;p&gt;It seems at this point in time piping processes might be unsafe. There is
+a work around using raw fd (there are equivalent methods for Windows if you
+need them) as a way to pipe the outputs of one program call into the input of
+another. Sadly Rust&#39;s documentation is a bit lacking in the matter. Hopefully
+this will be of use to someone if they need to do this in the future.&lt;/p&gt;
+
+&lt;p&gt;Other Relevant Links:
+- &lt;a href=&quot;https://doc.rust-lang.org/std/process/struct.Stdio.html&quot;&gt;Stdio Docs&lt;/a&gt;
+- &lt;a href=&quot;https://doc.rust-lang.org/std/process/struct.Command.html&quot;&gt;Command Docs&lt;/a&gt;&lt;/p&gt;
+</description>
+        <pubDate>Sat, 20 Jun 2015 11:08:00 -0400</pubDate>
+        <link>https://mgattozzi.github.io/rust/2015/06/20/Pipes/</link>
+        <guid isPermaLink="true">https://mgattozzi.github.io/rust/2015/06/20/Pipes/</guid>
+        
+        <category>pipes</category>
         
         <category>shell</category>
         
