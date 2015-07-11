@@ -1,6 +1,14 @@
 [
   
   {
+    "title"    : "Expect the Unexpected",
+    "category" : "",
+    "tags"     : "error-handling, rust",
+    "url"      : "/rust/2015/07/11/Expect/",
+    "date"     : "2015-07-11 14:13:09 -0400"
+    } ,
+    
+  {
     "title"    : "Rusty",
     "category" : "",
     "tags"     : "example, shell, rust",
