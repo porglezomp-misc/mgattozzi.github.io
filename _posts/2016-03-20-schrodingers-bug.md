@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Schrodingers Bug: Adventures in Asynchronous Debugging
+title: Schrodinger's Bug Adventures in Asynchronous Debugging
 ---
 
 Lately I've been writing integration tests for [Elsen](https://elsen.co)

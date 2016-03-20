@@ -9,8 +9,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,minimum-scale=1">
 
-  <title>Schrodingers Bug</title>
-  <meta name="description" content="">
+  <title>Schrodinger&#39;s Bug Adventures in Asynchronous Debugging</title>
+  <meta name="description" content="Lately I’ve been writing integration tests for Elsenusing node.js to verify our Haskell backend is indeed returning to uswhat we expect to be there. Using a ...">
 
   <link rel="canonical" href="https://mgattozzi.github.io/2016/03/20/schrodingers-bug.html">
   <link rel="alternate" type="application/rss+xml" title="Barely Functional" href="https://mgattozzi.github.io/feed.xml">
@@ -21,10 +21,10 @@
   "@context": "http://schema.org",
   "@type": "NewsArticle",
   "mainEntityOfPage": "https://mgattozzi.github.io/2016/03/20/schrodingers-bug.html",
-  "headline": "Schrodingers Bug",
+  "headline": "Schrodinger&#39;s Bug Adventures in Asynchronous Debugging",
   "datePublished": "2016-03-20T00:00:00-04:00",
   "dateModified": "2016-03-20T00:00:00-04:00",
-  "description": "",
+  "description": "Lately I’ve been writing integration tests for Elsenusing node.js to verify our Haskell backend is indeed returning to uswhat we expect to be there. Using a ...",
   "author": {
     "@type": "Person",
     "name": "Michael Gattozzi"
@@ -630,17 +630,161 @@ pre {
     <main class="content" role="main">
   <article class="post">
     <div class="post-meta">
-      <h1 class="post-title">Schrodingers Bug</h1>
+      <h1 class="post-title">Schrodinger's Bug Adventures in Asynchronous Debugging</h1>
     </div>
 
     <section class="post-content">
       <a name="topofpage"></a>
-      
+      <p>Lately I’ve been writing integration tests for <a href="https://elsen.co">Elsen</a>
+using node.js to verify our Haskell backend is indeed returning to us
+what we expect to be there. Using a combination of the Mocha, Chai, and
+Supertest frameworks I’ve managed to make a comprehensive set of tests.
+It’s a simple process: Mocha runs the tests and outputs if everything
+passed or not, Supertest makes the actual requests to our API, and Chai
+verifies the JSON we get back is what we would expect. One of our tests
+would look like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="c1">//This is our context that certain endpoints are wrapped in</span>
+<span class="nx">context</span><span class="p">(</span><span class="s1">'Functions'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">//This is the more specific context and where we start usin endpoints</span>
+  <span class="nx">context</span><span class="p">(</span><span class="s1">'Syntax Checking'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">endpoint</span> <span class="o">=</span> <span class="s1">'/v2/syntaxcheck'</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">syntax</span><span class="p">,</span> <span class="nx">syntax_res</span><span class="p">;</span>
+
+    <span class="c1">//This is one of the tests. It makes the request with API</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s1">'Syntax is valid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">syntax</span> <span class="o">=</span> <span class="s1">'function succ(x) { return (x+1); }'</span><span class="p">;</span>
+      <span class="nx">API</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">endpoint</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'Authorization'</span><span class="p">,</span><span class="nx">LOGIN_TOKEN</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">syntax</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="s1">'Content-Type'</span><span class="p">,</span> <span class="s1">'application/json; charset=utf-8'</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+          <span class="c1">//Here we make the actual comparisons</span>
+          <span class="c1">//Done is used for all the calls because they're asynchronous</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+            <span class="nx">syntax_res</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+            <span class="nx">syntax_res</span><span class="p">.</span><span class="nx">should</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+            <span class="nx">done</span><span class="p">();</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+
+    <span class="c1">//This is like above but we have an error here that I spent about</span>
+    <span class="c1">//two days debugging. Look at the previous one and see if you</span>
+    <span class="c1">//can figure it out at all.</span>
+    <span class="nx">it</span><span class="p">(</span><span class="s1">'Syntax is invalid'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">syntax</span> <span class="o">=</span> <span class="s1">'function succ(x) { return (x+ }'</span><span class="p">;</span>
+      <span class="nx">API</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">endpoint</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'Authorization'</span><span class="p">,</span><span class="nx">LOGIN_TOKEN</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">syntax</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="s1">'Content-Type'</span><span class="p">,</span> <span class="s1">'application/json; charset=utf-8'</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="nx">result</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="k">return</span> <span class="nx">done</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+            <span class="nx">syntax_res</span> <span class="o">=</span> <span class="nx">result</span><span class="p">.</span><span class="nx">body</span><span class="p">;</span>
+            <span class="nx">syntax_res</span><span class="p">.</span><span class="nx">should</span><span class="p">.</span><span class="nx">to</span><span class="p">.</span><span class="nx">eql</span><span class="p">(</span>
+              <span class="p">{</span> <span class="na">msg</span><span class="p">:</span> <span class="s1">'Parse error at line 1, col 31'</span><span class="p">,</span> <span class="na">position</span><span class="p">:</span> <span class="p">{</span> <span class="na">line</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="na">col</span><span class="p">:</span> <span class="mi">31</span> <span class="p">}</span> <span class="p">}</span>
+            <span class="p">);</span>
+          <span class="nx">done</span><span class="p">();</span>
+      <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre>
+</div>
+
+<p>Note that these are only a small section of the thousands of lines of
+code written to test the API. One error here though made me frustrated
+to no end. If you ran these tests as they’re written above then they
+both pass without issue.</p>
+
+<p>I discovered the issue when I was adding some more tests. I tested
+whether or not the JSON I got back even it existed. The test said it
+did. Then I tried to console.log() the result. Nothing was printed out.
+I tested if it didn’t exist as well. That test also passed. How can the
+JSON I’m getting back both exist and not exist simultaneously? This
+made absolutely no sense! Much like Schrodingers famous thought
+experiment I had something that existed and didn’t until I tried to
+observe it.</p>
+
+<p>Now what? The test I was doing was a POST as well much like my syntax
+checker endpoint. I also had some more that did a POST. I changed each
+of them to make them wrong and fail. I verified the correct results
+using curl to hit the endpoints manually. I ran the tests again. All
+the ones I changed failed except the syntax checker. This was where I
+started to go crazy. How come it worked for some of them but not all of
+them? I added a console.log() to the syntax checker as well just to see
+if I got anything unlike the first time. That’s when I really started
+to lose my mind. I got a result back this time. What I didn’t realize
+then though was that the result should have printed out where my test
+executed not later on in the middle of another test.</p>
+
+<p>Visually it looked like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>#Syntax Test executes here
+Pass
+#More Tests
+Pass
+#More Tests
+Pass
+#Syntax Test Result Outputs here
+{ JSON }
+
+#It should have been like this:
+#Syntax Test executes here
+Pass
+#Syntax Test Result Outputs here
+{ JSON }
+#More Tests
+Pass
+#More Tests
+Pass
+</code></pre>
+</div>
+
+<p>I spent many hours checking documentation and checking to see if it was
+a bug in versions of the testing frameworks. Long story short none of
+that helped in the slightest. I was chasing a red herring. That’s when
+I commented everything out but the login test (in order to authenticate
+our connections) and the syntax check test. This test still had the
+console.log() statement. Guess what? Nothing printed this time! This
+was the second day I was working on this test and still nothing. My
+boss Zac came in at this point to help me out and we spent a while
+trying to figure it out. We lloked at the docs again and other working
+bits of my code. That’s when we figured it out. The fact one word was
+not used caused the tests to pass.</p>
+
+<p>I had forgoten one word in the whole process that would cause it all to
+work as intended: done.</p>
+
+<p>Remember this line of code?</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>it('Syntax is invalid', function() {
+  //Other stuff is in here
+});
+</code></pre>
+</div>
+
+<p>The anonymous function is missing the word done as a parameter. The
+tests normally use it in those .end() calls I make to tell the test to
+wait for whatever is in there to complete because it’s asynchronus.
+However without that done statement the .end() function wasn’t even
+being entered into causing the tests to pass otherwise. When a result
+was logged later it was because it had finally been processed. When it
+wasn’t, that was because the test framework had already completed
+running all of it’s tests and so didn’t bother to print the results!</p>
+
+<p>Needless to say I was relieved to finally have the tests working as
+expected. I learned quite a bit about debugging asynchronous code,
+something I’ve never really touched upon. I’ve normally dealt with
+either synchronous code or just sequential execution making this an eye
+opening experience. The main take away is that if you are doing
+asynchronous code make sure that you have your callback defined if you
+want it to wait for the result!</p>
 
     </section>
     <footer class="post-footer">
       <section class="share">
-        <a class="icon" href="http://twitter.com/share?text=Schrodingers+Bug&amp;url=https://mgattozzi.github.io/2016/03/20/schrodingers-bug" target="_blank">
+        <a class="icon" href="http://twitter.com/share?text=Schrodinger%27s+Bug+Adventures+in+Asynchronous+Debugging&amp;url=https://mgattozzi.github.io/2016/03/20/schrodingers-bug" target="_blank">
           Share on
           
 <span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
@@ -656,7 +800,7 @@ pre {
         <section class="author">
           <div class="author-image"></div>
           <h4>Michael Gattozzi</h4>
-          <p class="bio">I get paid to make magnets write things to metal to make lights change patterns on a screen and I can't imagine doing anything else. Lover of all things vim, functional, and unix. Avid gamer with a penchant to buy too many games from Humble Bundles.
+          <p class="bio">I get paid to make lights change patterns on a screen and I can't imagine doing anything else. Lover of all things vim, functional, and unix. Avid gamer with a penchant to buy more games than I have time for.
 </p>
 
           <p>
