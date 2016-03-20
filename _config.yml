@@ -10,15 +10,15 @@ title: Barely Functional
 email: mgattozzi@gmail.com
 description: >
   Thoughts and musings from a functional programmer who drinks way too much coffee.
-logo: "/assets/images/logo.png"
-baseurl: "" # the subpath of your site, e.g. /blog
+logo: "mgattozzi.github.io/assets/images/logo.png"
+baseurl: "/" # the subpath of your site, e.g. /blog
 url: "https://mgattozzi.github.io" # the base hostname & protocol for your site
 paginate:	5 # The number of posts to show per page on your homepage
 
 name: 'Michael Gattozzi'
 bio: >
   I get paid to make magnets write things to metal to make lights change patterns on a screen and I can't imagine doing anything else. Lover of all things vim, functional, and unix. Avid gamer with a penchant to buy too many games from Humble Bundles.
-author_image: "/assets/images/author.jpg"
+author_image: "mgattozzi.github.io/assets/images/author.jpg"
 twitter_username: mgattozzi
 github_username:  mgattozzi
 
