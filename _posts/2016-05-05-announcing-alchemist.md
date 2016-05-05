@@ -42,3 +42,6 @@ diesel as a library.
 I hope that this will solve a problem for some that has bugged me for
 quite some time and I'm looking forward to seeing what Alchemist will
 become in the future.
+
+You can find the code located on Github
+[here](https://github.com/mgattozzi/Alchemist)
