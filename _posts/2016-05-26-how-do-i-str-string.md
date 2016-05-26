@@ -29,8 +29,8 @@ to_string() turns an &str into a String. Back before [this pr in version
 1.9](https://github.com/rust-lang/rust/pull/32586) of the compiler this
 was actually slower than the next method I'll be showing you. It went
 through crazy amounts of machinery to turn it into a String whereas the
-newer compiler version optimized this for &str -> String making it the
-faster and preferred way for simple cases like this.
+newer compiler version optimized this for &str -> String making it
+equivalent to the next method speed wise.
 
 ### to_owned()
 
@@ -40,16 +40,11 @@ fn main() {
 }
 ```
 
-Since the &str is an immutable reference to a String the to_owned()
-machinery can be used to turn it into a String you own and can do things
-with! Generally this is a clone (copy the data into a new structure you
-own) going on behind the scenes. to_owned() has uses in other places in
-rust. If you look at the docs
-[here](https://doc.rust-lang.org/std/borrow/trait.ToOwned.html) you'll
-see that if a data type uses this trait you can call to_owned() to get
-a version that you have ownership of in your code. The main thing to
-take away here is that to_owned() turns an &str into a String if you
-call it.
+Since the &str is an immutable reference to a String using to_owned()
+turns it into a String you own and can do things with! This is now the
+same as to_string(), but was the preferred way prior to 1.9. to_owned()
+is used for other data types to promote an immutable reference into a
+data type you own.
 
 ### String::from()
 
