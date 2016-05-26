@@ -9,10 +9,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,minimum-scale=1">
 
-  <title>Announcing Alchemist</title>
-  <meta name="description" content="I’ve been working on a small project for a while now and it’s with greatpleasure that I get to announce it now that I have a proof of concept.This is Alchemi...">
+  <title>How do I convert a &amp;str to a String in Rust?</title>
+  <meta name="description" content="This is the first in a whole series of blog posts to answer the simplequestion “How do I $THING in Rust?” Many times as a user coming into theRust language t...">
 
-  <link rel="canonical" href="https://mgattozzi.github.io/2016/05/05/announcing-alchemist.html">
+  <link rel="canonical" href="https://mgattozzi.github.io/2016/05/26/how-do-i-str-string.html">
   <link rel="alternate" type="application/rss+xml" title="Barely Functional" href="https://mgattozzi.github.io/feed.xml">
 
   <script type="application/ld+json">
@@ -20,11 +20,11 @@
 {
   "@context": "http://schema.org",
   "@type": "NewsArticle",
-  "mainEntityOfPage": "https://mgattozzi.github.io/2016/05/05/announcing-alchemist.html",
-  "headline": "Announcing Alchemist",
-  "datePublished": "2016-05-05T00:00:00-04:00",
-  "dateModified": "2016-05-05T00:00:00-04:00",
-  "description": "I’ve been working on a small project for a while now and it’s with greatpleasure that I get to announce it now that I have a proof of concept.This is Alchemi...",
+  "mainEntityOfPage": "https://mgattozzi.github.io/2016/05/26/how-do-i-str-string.html",
+  "headline": "How do I convert a &amp;str to a String in Rust?",
+  "datePublished": "2016-05-26T00:00:00-04:00",
+  "dateModified": "2016-05-26T00:00:00-04:00",
+  "description": "This is the first in a whole series of blog posts to answer the simplequestion “How do I $THING in Rust?” Many times as a user coming into theRust language t...",
   "author": {
     "@type": "Person",
     "name": "Michael Gattozzi"
@@ -634,58 +634,110 @@ pre {
     <main class="content" role="main">
   <article class="post">
     <div class="post-meta">
-      <h1 class="post-title">Announcing Alchemist</h1>
+      <h1 class="post-title">How do I convert a &str to a String in Rust?</h1>
     </div>
 
     <section class="post-content">
       <a name="topofpage"></a>
-      <p>I’ve been working on a small project for a while now and it’s with great
-pleasure that I get to announce it now that I have a proof of concept.
-This is Alchemist a program designed to transform package names for
-other distributions into the equivalent package names in your own
-distribution. It then will install them for you automatically.</p>
+      <p>This is the first in a whole series of blog posts to answer the simple
+question “How do I $THING in Rust?” Many times as a user coming into the
+Rust language there are growing pains and some things that seem
+intuitive after using the language for a while aren’t that much for
+a new user. This is aimed at those new users.</p>
 
-<p>I was tired of Arch Linux being treated as a second class citizen in
-many Github projects where instructions only existed for Ubuntu
-installation. This was a shame and raises a barrier to entry to getting
-users set up to use the project. Why not create a tool that removes this
-barrier that I consistently came against? Why not create it so that it
-worked for all unix based platforms? I can’t be the only one facing this
-problem and lesser known or used distributions must have it worse than
-I when it comes to this.</p>
+<p>With that in mind let’s jump right in!</p>
 
-<p>I began work on Alchemist in order to solve this problem, put package
-names in and get the correct version for my platform out. Right now
-I only have a few packages that map from Ubuntu to Arch (or vice versa)
-and the db schema only works for Arch and Ubuntu right now. I want to
-change this though and expand the functionality to other platforms and
-add more packages for users to have. This is a huge undertaking and not
-one I can do alone. Any help is appreciated no matter how small. Even
-if it’s just adding package mappings or adding support for more distros
-all code changes are welcome.</p>
+<h2 id="converting-a-str-to-a-string">Converting a &amp;str to a String</h2>
 
-<p>Of course I can’t just claim all of this and not give a demonstration.
-Here’s a video of me installing some packages for Ubuntu and getting
-the Arch Linux equivalent:</p>
+<p>Surprisingly there are quite a few ways to do this and depending on what
+you’re trying to do one of the methods layed out below will be more
+appropriate.</p>
 
-<iframe src="https://player.vimeo.com/video/165509394" width="640" height="357" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe>
+<h3 id="tostring">to_string()</h3>
 
-<p>In order to build it you’ll need the binary and library packages for
-postgresql and sqlite of your distro so that diesel will build and
-the latest version of the nightly compiler due to the nature of
-diesel as a library.</p>
+<div class="language-rust highlighter-rouge"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">new_string</span> <span class="o">=</span> <span class="s">"Hello World!"</span><span class="nf">.to_string</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+</div>
 
-<p>I hope that this will solve a problem for some that has bugged me for
-quite some time and I’m looking forward to seeing what Alchemist will
-become in the future.</p>
+<p>to_string() turns an &amp;str into a String. Back before <a href="https://github.com/rust-lang/rust/pull/32586">this pr in version
+1.9</a> of the compiler this
+was actually slower than the next method I’ll be showing you. It went
+through crazy amounts of machinery to turn it into a String whereas the
+newer compiler version optimized this for &amp;str -&gt; String making it the
+faster and preferred way for simple cases like this.</p>
 
-<p>You can find the code located on Github
-<a href="https://github.com/mgattozzi/Alchemist">here</a></p>
+<h3 id="toowned">to_owned()</h3>
+
+<div class="language-rust highlighter-rouge"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">new_string</span> <span class="o">=</span> <span class="s">"Hello World!"</span><span class="nf">.to_owned</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Since the &amp;str is an immutable reference to a String the to_owned()
+machinery can be used to turn it into a String you own and can do things
+with! Generally this is a clone (copy the data into a new structure you
+own) going on behind the scenes. to_owned() has uses in other places in
+rust. If you look at the docs
+<a href="https://doc.rust-lang.org/std/borrow/trait.ToOwned.html">here</a> you’ll
+see that if a data type uses this trait you can call to_owned() to get
+a version that you have ownership of in your code. The main thing to
+take away here is that to_owned() turns an &amp;str into a String if you
+call it.</p>
+
+<h3 id="stringfrom">String::from()</h3>
+
+<div class="language-rust highlighter-rouge"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">new_string</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">from</span><span class="p">(</span><span class="s">"Hello World!"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>When you are using to_string() in any compiler after 1.9 you’re actually
+using this method. to_string() ends up being syntactic sugar for it.
+You hand an &amp;str into the from method and from there it constructs
+a String type for you to use.</p>
+
+<h3 id="stringnew-stringpushstr">String::new(); String::push_str();</h3>
+
+<div class="language-rust highlighter-rouge"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">new_string</span> <span class="o">=</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span> <span class="c">//Create an empty string</span>
+    <span class="n">new_string</span><span class="nf">.push_str</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">);</span>
+    <span class="n">new_string</span><span class="nf">.push_str</span><span class="p">(</span><span class="s">" World!"</span><span class="p">);</span>
+    <span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">new_string</span><span class="p">);</span> <span class="c">//Prints Hello World!</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Since a String is a growable data type you can add to it by pushing &amp;str
+into it. While this is a bit verbose for the example I gave above you
+could use it to concatenate a variety of &amp;str into one String that you
+can then manipulate to do other things.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Above are the various ways you can make a String from a &amp;str and each
+serves a different purpose:</p>
+
+<ul>
+  <li>.to_string() if you want a simple conversion</li>
+  <li>.to_owned() if you want a simple conversion</li>
+  <li>String::from() a more explicit way to say what you’re doing</li>
+  <li>String::push_str() if you need to append to a String</li>
+</ul>
+
+<p>If you have a burning question that you want answered but just can’t
+seem to find the answer you need shoot me an email at
+mgattozzi@gmail.com and I’ll write a post to answer your question! No
+question is stupid. Chances are if you’re having trouble with it so is
+someone else so ask away!</p>
 
     </section>
     <footer class="post-footer">
       <section class="share">
-        <a class="icon" href="http://twitter.com/share?text=Announcing+Alchemist&amp;url=https://mgattozzi.github.io/2016/05/05/announcing-alchemist" target="_blank">
+        <a class="icon" href="http://twitter.com/share?text=How+do+I+convert+a+%26str+to+a+String+in+Rust%3F&amp;url=https://mgattozzi.github.io/2016/05/26/how-do-i-str-string" target="_blank">
           Share on
           
 <span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
@@ -724,7 +776,7 @@ become in the future.</p>
             </span>
           </p>
           <hr>
-          <p class="published">Published <time datetime="2016-05-05 00:00">05 May 2016</time></p>
+          <p class="published">Published <time datetime="2016-05-26 00:00">26 May 2016</time></p>
         </section>
       </div>
       

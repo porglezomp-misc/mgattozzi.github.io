@@ -16,7 +16,7 @@ Tech Interests include:
   - Machine Learning
   - Distributed Systems
   - Haskell
-  - Rust
+  - Rust <3
   - Python
   - Arch Linux
 

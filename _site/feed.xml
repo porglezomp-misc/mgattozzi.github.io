@@ -6,9 +6,113 @@
 </description>
     <link>https://mgattozzi.github.io/</link>
     <atom:link href="https://mgattozzi.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 05 May 2016 19:24:45 -0400</pubDate>
-    <lastBuildDate>Thu, 05 May 2016 19:24:45 -0400</lastBuildDate>
+    <pubDate>Thu, 26 May 2016 10:06:36 -0400</pubDate>
+    <lastBuildDate>Thu, 26 May 2016 10:06:36 -0400</lastBuildDate>
     <generator>Jekyll v3.1.3</generator>
+    
+      <item>
+        <title>How do I convert a &amp;str to a String in Rust?</title>
+        <description>&lt;p&gt;This is the first in a whole series of blog posts to answer the simple
+question “How do I $THING in Rust?” Many times as a user coming into the
+Rust language there are growing pains and some things that seem
+intuitive after using the language for a while aren’t that much for
+a new user. This is aimed at those new users.&lt;/p&gt;
+
+&lt;p&gt;With that in mind let’s jump right in!&lt;/p&gt;
+
+&lt;h2 id=&quot;converting-a-str-to-a-string&quot;&gt;Converting a &amp;amp;str to a String&lt;/h2&gt;
+
+&lt;p&gt;Surprisingly there are quite a few ways to do this and depending on what
+you’re trying to do one of the methods layed out below will be more
+appropriate.&lt;/p&gt;
+
+&lt;h3 id=&quot;tostring&quot;&gt;to_string()&lt;/h3&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Hello World!&quot;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.to_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;to_string() turns an &amp;amp;str into a String. Back before &lt;a href=&quot;https://github.com/rust-lang/rust/pull/32586&quot;&gt;this pr in version
+1.9&lt;/a&gt; of the compiler this
+was actually slower than the next method I’ll be showing you. It went
+through crazy amounts of machinery to turn it into a String whereas the
+newer compiler version optimized this for &amp;amp;str -&amp;gt; String making it the
+faster and preferred way for simple cases like this.&lt;/p&gt;
+
+&lt;h3 id=&quot;toowned&quot;&gt;to_owned()&lt;/h3&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Hello World!&quot;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.to_owned&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Since the &amp;amp;str is an immutable reference to a String the to_owned()
+machinery can be used to turn it into a String you own and can do things
+with! Generally this is a clone (copy the data into a new structure you
+own) going on behind the scenes. to_owned() has uses in other places in
+rust. If you look at the docs
+&lt;a href=&quot;https://doc.rust-lang.org/std/borrow/trait.ToOwned.html&quot;&gt;here&lt;/a&gt; you’ll
+see that if a data type uses this trait you can call to_owned() to get
+a version that you have ownership of in your code. The main thing to
+take away here is that to_owned() turns an &amp;amp;str into a String if you
+call it.&lt;/p&gt;
+
+&lt;h3 id=&quot;stringfrom&quot;&gt;String::from()&lt;/h3&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello World!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;When you are using to_string() in any compiler after 1.9 you’re actually
+using this method. to_string() ends up being syntactic sugar for it.
+You hand an &amp;amp;str into the from method and from there it constructs
+a String type for you to use.&lt;/p&gt;
+
+&lt;h3 id=&quot;stringnew-stringpushstr&quot;&gt;String::new(); String::push_str();&lt;/h3&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;//Create an empty string&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.push_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.push_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot; World!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nd&quot;&gt;println!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;//Prints Hello World!&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Since a String is a growable data type you can add to it by pushing &amp;amp;str
+into it. While this is a bit verbose for the example I gave above you
+could use it to concatenate a variety of &amp;amp;str into one String that you
+can then manipulate to do other things.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;Above are the various ways you can make a String from a &amp;amp;str and each
+serves a different purpose:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;.to_string() if you want a simple conversion&lt;/li&gt;
+  &lt;li&gt;.to_owned() if you want a simple conversion&lt;/li&gt;
+  &lt;li&gt;String::from() a more explicit way to say what you’re doing&lt;/li&gt;
+  &lt;li&gt;String::push_str() if you need to append to a String&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you have a burning question that you want answered but just can’t
+seem to find the answer you need shoot me an email at
+mgattozzi@gmail.com and I’ll write a post to answer your question! No
+question is stupid. Chances are if you’re having trouble with it so is
+someone else so ask away!&lt;/p&gt;
+</description>
+        <pubDate>Thu, 26 May 2016 00:00:00 -0400</pubDate>
+        <link>https://mgattozzi.github.io/2016/05/26/how-do-i-str-string.html</link>
+        <guid isPermaLink="true">https://mgattozzi.github.io/2016/05/26/how-do-i-str-string.html</guid>
+        
+        
+      </item>
     
       <item>
         <title>Announcing Alchemist</title>
@@ -51,6 +155,9 @@ diesel as a library.&lt;/p&gt;
 &lt;p&gt;I hope that this will solve a problem for some that has bugged me for
 quite some time and I’m looking forward to seeing what Alchemist will
 become in the future.&lt;/p&gt;
+
+&lt;p&gt;You can find the code located on Github
+&lt;a href=&quot;https://github.com/mgattozzi/Alchemist&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
 </description>
         <pubDate>Thu, 05 May 2016 00:00:00 -0400</pubDate>
         <link>https://mgattozzi.github.io/2016/05/05/announcing-alchemist.html</link>
