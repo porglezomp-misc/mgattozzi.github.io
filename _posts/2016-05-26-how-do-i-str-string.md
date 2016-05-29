@@ -110,9 +110,10 @@ can then manipulate to do other things.
 fn main() {
     let world_var= "world";
     //Becomes "Hello World!"
-    let new_string = format!("Hello {}!", world);
+    let new_string = format!("Hello {}!", world_var);
 }
 ```
+*Thanks to [/u/horsefactory](https://www.reddit.com/r/rust/comments/4l71qw/how_do_i_convert_a_str_to_string_the_beginning_in/d3n258e) for pointing out the typo that was here in a previous version*
 
 You can also use the format!() macro in order to do some more complex
 formatting with &str as input. It's like println!() but instead of
