@@ -5,7 +5,7 @@ title: How do I use the Standard Library Macros in Rust? Part 1
 
 This is the second post in a series of blog posts dedicated to answering
 the simple question "How do I X in Rust?" After last week's post
-[/u/PLACEHOLDER]()
+[/u/Breaking-Away](https://www.reddit.com/r/rust/comments/4l71qw/how_do_i_convert_a_str_to_string_the_beginning_in/d3mg0dk)
 asked about how to use the macros available in the Standard Library.
 Since there are quite a few I'll breaking up the posts into at least two
 parts. This first post will cover the most common macros used in the
@@ -23,7 +23,8 @@ compiled it's expanded out to actual code based off of the rules it
 matches and what is given as input. This makes macros pretty powerful
 and flexible. Even writing a macro could be it's own series of posts.
 Today though we're going to focus on how to use the Standard Library's
-macros and how you can use them effectively.
+macros and how you can use them effectively. In a future post I'll cover
+writing your own macro
 
 The ones we'll cover in this post are:
 
@@ -175,7 +176,6 @@ output there immediately you can add a call to flush it like in the
 above example.
 
 
-
 ### println!()
 
 ```rust
@@ -200,63 +200,177 @@ more than print being used for reasons like this.
 ### try!()
 
 ```rust
-// This is a snippet of code I've been writing for one project and it has
-// been simplified a bit.
-fn main() {
+use std::fs::File;
 
+fn main() {
+	let _unused_result = you_made_this();
+	let _unused_result = why_did_you_make_this();
+}
+
+// Trys to make a file, returns an io error if it failed
+// Ok with the () return type (essentially not a type, but
+// it is and that's a discussion for a different day)
+fn you_made_this() -> std::io::Result<()> {
+    let my_file = try!(File::create("I_Made_This.txt"));
+    Ok(())
+}
+
+// Same code but way more verbose!
+fn why_did_you_make_this() -> std::io::Result<()> {
+   let my_file = File::create("foo.txt");
+
+    let _result = match my_file {
+        Ok(t) => t,
+        Err(e) => return Err(e),
+    };
+
+    Ok(())
 }
 ```
 
 I'll be honest, up until about two weeks ago I didn't know how this
 worked, and I've been using Rust since 1.0 came out. That's why I'm
-writing this, so you don't have to fumble around with it.
+writing this, so you don't have to fumble around with it. try!() is
+the match statement in the second function when expanded out. Because
+of this your function needs a Result return type (in this case the IO
+kind) matching what it's being used on to work. try!() is a nice way
+to unwrap results where you want the error to quit the function and
+allow you to handle the error explicitly. If you don't care about the
+error being returned or still want to do things in the function even
+if an error occurs don't use try!(). Otherwise feel free to use it
+liberally so you don't have crazy nesting trying to deal with it
+explicitly.
 
 ### unimplemented!()
 
 ```rust
 fn main() {
-  // What we care about with this made up function is that it returns an
-  // Option<u32> no need to actually show an implementation
-  let x = fib_seq(10);
-  match x {
-    Some(y) = println!("{}",y),
-    None    = unimplemented!(),
-  }
-
+    // What we care about with this made up function is that it returns an
+    // Option<u32> no need to actually show an implementation
+    let x = fib_seq(10);
+    match x {
+        Some(y) = println!("{}",y),
+        None    = unimplemented!(),
+    }
 }
 ```
+
+In the above example I've set the None branch to say it's unimplemented.
+This macro lets the user continue to code and have things typecheck as 
+if you had written things there and lets you or someone looking at the 
+code base know that it's incomplete. However, this also means the code 
+will panic if the macro code is reached in the flow of execution. In 
+this case fib_seq() returned a None then this would case the code to fail. 
+This macro is great to create stub functions or things you'll need in order
+to get the compiler to shut up about it and know you still need to fix it.
 
 ### unreachable!()
 
 ```rust
 fn main() {
+    let x = squared(5);
+    if x == 0 {
+        println!("x was 0");
+    } else if x > 0 {
+        prinln!("x^2 is: {}", x);
+    } else {
+        unreachable!("If you got here then either math and logic is broken
+        , or you should tell the compiler team");
+    }
+}
 
+fn squared(n: i32) -> i32 {
+    n * n
 }
 ```
+
+The above code will take a number and square it and print out either 0 or it's 
+value. I added a trivial else statement, but if it's reached it tells us two 
+things, either our squared function is broken or the compiler is having some 
+problems. Either way, unreachable!() is a macro you use to let the compiler know 
+that a certain branch of execution is impossible and it allows it to optimize it
+away. However, if you use it incorrectly and it's reached the code will abort. Use
+this if you can guarantee the code can't be reached. Otherwise you're better off
+providing better error handling if you're uncertain if it can be reached or not.
 
 ### vec!()
 
 ```rust
 fn main() {
-
+    let x = vec![1,2,3,4,5];
+    for i in x.iter() {
+        println!("{}",i);
+    }
+    // Prints out
+    // 1
+    // 2
+    // 3
+    // 4
+    // 5
+    
+    // Makes a vec of over 9000 twos.
+    let y = vec![2; 9001]
 }
 ```
+
+vec![] is a macro that takes a slice (notice the [] not () used in the macro
+call) and constructs a vector out of the the values you pass too it. Much nicer
+than instantiating a Vector and pushing the individual data types into it one
+call to push() at a time. If you know some of the values you need inside it 
+ahead of time this is a real nice vector to use. It's also good to make a Vec
+requiring repeated values a set number of times as show for the second part of
+the example above.
 
 ### write!()
 
 ```rust
-fn main() {
+use std::io::Write;
+use std::str;
 
+fn main() {
+	// This is what a byte string is actually, a slice of u8's
+	// I've explicitly stated the type here for readability
+	// even if the code itself didn't need it
+	let mut buffer: Vec<u8> = Vec::new();
+	write!(&mut buffer, "Words!").expect("Didn't write to buffer!");
+	// You can also use formatted arguments like println!()
+	
+	// We had to use debug here since Vec<u8> doesn't have
+	// the display trait implemented
+	println!("{:?}", &buffer); // [87, 111, 114, 100, 115, 33]
+	println!("{}", str::from_utf8(&buffer).unwrap()); // Words!
 }
 ```
+
+write!() is useful for creating bytestrings from input rather than
+having to figure out the individual numbers and pushing them into a
+Vec<u8> or having to do the conversion one at a time. It's like print!(),
+but for a buffer that you can then use to do various other things with!
 
 ### writeln!()
 
 ```rust
-fn main() {
+use std::io::Write;
+use std::str;
 
+fn main() {
+	// Same thing but now with new lines!
+	let mut buffer: Vec<u8> = Vec::new();
+	writeln!(&mut buffer, "Words!").expect("Didn't write to buffer!");
+	// You can also use formatted arguments like println!()
+	
+	// Both print with the extra new line but only in the first one do you
+	// see it manifest as a visible number (it's the 10)
+	println!("{:?}", &buffer); // [87, 111, 114, 100, 115, 33, 10]
+	println!("{}", str::from_utf8(&buffer).unwrap()); // Words!
 }
 ```
+
+writeln!() is useful for creating bytestrings from input rather than
+having to figure out the individual numbers and pushing them into a
+Vec<u8> or having to do the conversion one at a time and it automagically
+adds a newline for you! It's like println!(), but for a buffer that you
+can then use to do various other things with!
 
 ## Conclusion
 
