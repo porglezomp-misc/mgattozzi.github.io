@@ -6,24 +6,48 @@
 </description>
     <link>https://mgattozzi.github.io/</link>
     <atom:link href="https://mgattozzi.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 26 May 2016 10:06:36 -0400</pubDate>
-    <lastBuildDate>Thu, 26 May 2016 10:06:36 -0400</lastBuildDate>
+    <pubDate>Fri, 27 May 2016 18:48:38 -0400</pubDate>
+    <lastBuildDate>Fri, 27 May 2016 18:48:38 -0400</lastBuildDate>
     <generator>Jekyll v3.1.3</generator>
     
       <item>
         <title>How do I convert a &amp;str to a String in Rust?</title>
         <description>&lt;p&gt;This is the first in a whole series of blog posts to answer the simple
-question “How do I $THING in Rust?” Many times as a user coming into the
+question “How do I X in Rust?” Many times as a user coming into the
 Rust language there are growing pains and some things that seem
-intuitive after using the language for a while aren’t that much for
-a new user. This is aimed at those new users.&lt;/p&gt;
+intuitive after using the language for a while aren’t for a new user.
+This is aimed at those new users, however even an experienced Rust user
+might learn a new trick or two.&lt;/p&gt;
 
 &lt;p&gt;With that in mind let’s jump right in!&lt;/p&gt;
 
+&lt;h2 id=&quot;whats-the-difference-between-str-and-string&quot;&gt;What’s the difference between &amp;amp;str and String?&lt;/h2&gt;
+
+&lt;p&gt;Before we talk about conversion it’ll help to know what
+a &lt;a href=&quot;https://doc.rust-lang.org/std/primitive.str.html&quot;&gt;&amp;amp;str&lt;/a&gt; and
+a &lt;a href=&quot;https://doc.rust-lang.org/std/string/struct.String.html&quot;&gt;String&lt;/a&gt; are and why we’d want to convert from a &amp;amp;str to a String.
+A &amp;amp;str is an immutable reference to a String. This means you can’t change
+the string at all or manipulate it in any way. However if you have
+a String you have the option to do that as well as having some methods
+that &amp;amp;str doesn’t have to do text manipulation. You can look at the
+methods available to the different data types that are linked above for
+what you can do exactly with each type. Generally speaking:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;You want &amp;amp;str if you don’t want to change the string&lt;/li&gt;
+  &lt;li&gt;You want String if you want to change the string or need ownership of
+the data&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Sometimes you’ll get a &amp;amp;str type from a method, but need a String. The
+following methods we’ll discuss will show you how to convert to a String
+from an &amp;amp;str.
+&lt;em&gt;Thanks to &lt;a href=&quot;https://twitter.com/LeoUnglaub/status/735942665569767424&quot;&gt;@LeoUnglaub&lt;/a&gt; for suggesting to add this section&lt;/em&gt;&lt;/p&gt;
+
 &lt;h2 id=&quot;converting-a-str-to-a-string&quot;&gt;Converting a &amp;amp;str to a String&lt;/h2&gt;
 
-&lt;p&gt;Surprisingly there are quite a few ways to do this and depending on what
-you’re trying to do one of the methods layed out below will be more
+&lt;p&gt;Surprisingly, there are quite a few ways to do this and depending on what
+you’re trying to do one of the methods laid out below will be more
 appropriate.&lt;/p&gt;
 
 &lt;h3 id=&quot;tostring&quot;&gt;to_string()&lt;/h3&gt;
@@ -38,8 +62,14 @@ appropriate.&lt;/p&gt;
 1.9&lt;/a&gt; of the compiler this
 was actually slower than the next method I’ll be showing you. It went
 through crazy amounts of machinery to turn it into a String whereas the
-newer compiler version optimized this for &amp;amp;str -&amp;gt; String making it the
-faster and preferred way for simple cases like this.&lt;/p&gt;
+newer compiler version optimized this for &amp;amp;str -&amp;gt; String making it
+equivalent to the next method speed wise. This machinery is all the code
+that can parse the data type and turn it into a String. It should be
+noted that this and the following methods are copying data under the
+hood so that you can have ownership of the String. There is no speed
+difference between to_string(), to_owned(), and String::from().&lt;/p&gt;
+
+&lt;p&gt;There was a question on the subreddit as to whether this means .to_owned() would be deprecated. &lt;a href=&quot;https://www.reddit.com/r/rust/comments/4l71qw/how_do_i_convert_a_str_to_string_the_beginning_in/d3mc6jy?context=3&quot;&gt;/u/Roaneno answers it well here.&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;toowned&quot;&gt;to_owned()&lt;/h3&gt;
 
@@ -49,16 +79,11 @@ faster and preferred way for simple cases like this.&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Since the &amp;amp;str is an immutable reference to a String the to_owned()
-machinery can be used to turn it into a String you own and can do things
-with! Generally this is a clone (copy the data into a new structure you
-own) going on behind the scenes. to_owned() has uses in other places in
-rust. If you look at the docs
-&lt;a href=&quot;https://doc.rust-lang.org/std/borrow/trait.ToOwned.html&quot;&gt;here&lt;/a&gt; you’ll
-see that if a data type uses this trait you can call to_owned() to get
-a version that you have ownership of in your code. The main thing to
-take away here is that to_owned() turns an &amp;amp;str into a String if you
-call it.&lt;/p&gt;
+&lt;p&gt;Since the &amp;amp;str is an immutable reference to a String using to_owned()
+turns it into a String you own and can do things with! This is now the
+same as to_string(), but was the preferred way prior to 1.9 .to_owned()
+is used for other data types to promote an immutable reference into a
+data type you own.&lt;/p&gt;
 
 &lt;h3 id=&quot;stringfrom&quot;&gt;String::from()&lt;/h3&gt;
 
@@ -73,7 +98,7 @@ using this method. to_string() ends up being syntactic sugar for it.
 You hand an &amp;amp;str into the from method and from there it constructs
 a String type for you to use.&lt;/p&gt;
 
-&lt;h3 id=&quot;stringnew-stringpushstr&quot;&gt;String::new(); String::push_str();&lt;/h3&gt;
+&lt;h3 id=&quot;stringpushstr&quot;&gt;String::push_str()&lt;/h3&gt;
 
 &lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;//Create an empty string&lt;/span&gt;
@@ -89,23 +114,131 @@ into it. While this is a bit verbose for the example I gave above you
 could use it to concatenate a variety of &amp;amp;str into one String that you
 can then manipulate to do other things.&lt;/p&gt;
 
+&lt;h3 id=&quot;format&quot;&gt;format!()&lt;/h3&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_var&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;world&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;c&quot;&gt;//Becomes &quot;Hello World!&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nd&quot;&gt;format!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello {}!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;You can also use the format!() macro in order to do some more complex
+formatting with &amp;amp;str as input. It’s like println!() but instead of
+outputting to stdout it instead returns a String. This is simpler to use
+than .push_str() if you know what text you want in your string and don’t
+want lines of code just to set it up. Given the above example with
+.push_str() it would be:&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world_var&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;world&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;mut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.push_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello &quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.push_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world_var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.push_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This is way more verbose than is needed. That’s why a case like this is
+more suited to format!() to have the code be more expressive and clean
+looking. However, there is a cost. Remember that crazy machinery I was
+talking about for .to_string()? That was using this under the hood and
+as such was less efficient. Use this method with caution if speed is
+a concern.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Tip courtesy of &lt;a href=&quot;https://www.reddit.com/r/rust/comments/4l71qw/how_do_i_convert_a_str_to_string_the_beginning_in/d3kxqhk&quot;&gt;/u/MrJillHace&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;into&quot;&gt;into()&lt;/h3&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Hello world!&quot;&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;.into&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This is a less well known way to do it, but since &amp;amp;str implements
+Into it has this method available to it. Think of it as saying I’m
+turning this into that. It’s a trait for conversions which you can find
+&lt;a href=&quot;&quot;&gt;here in the docs&lt;/a&gt; if you want to read more about it. While it’s a
+little less clear as to what it’s doing you have this method available
+to you as well. It’s not guaranteed to be fast according to the
+definition of the trait, just that you are guaranteed the conversion
+itself. String::from() implements the From trait which implements Into.
+You’re probably better off using that method rather than this, but
+you’re more than free to do so.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Tip courtesy of
+&lt;a href=&quot;https://twitter.com/nj_snav_lin/status/735923508467924997?s=09&quot;&gt;@nj_snav_lin&lt;/a&gt; and &lt;a href=&quot;https://www.reddit.com/r/rust/comments/4l71qw/how_do_i_convert_a_str_to_string_the_beginning_in/d3lgmdi&quot;&gt;/u/cramert&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;whats-the-idiomatic-rust-way&quot;&gt;What’s the idiomatic Rust way?&lt;/h2&gt;
+
+&lt;p&gt;Most code you’ll see will use .to_owned() or String::from() since that
+was faster than .to_string(). Now though any of those 3 will be the most
+common way to do conversions. This is one of those things that has so
+many ways to do things that there’s no one standard for the community.
+I personally think .to_string() or String::from() are good choices since
+they emphasize what they’re doing more so than .to_owned() or any of the
+other methods. Others might disagree, but at the end of the day it’s
+your code so choose the method that’s best suited for what you’re doing.&lt;/p&gt;
+
+&lt;h2 id=&quot;we-have-to-go-back-marty&quot;&gt;We have to go back Marty!&lt;/h2&gt;
+
+&lt;p&gt;Sometimes you’ll need to go back from a String to &amp;amp;str. All you’ll have
+to do is:&lt;/p&gt;
+
+&lt;div class=&quot;language-rust highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;fn&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello World!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_immutable_string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;//This is a &amp;amp;String type&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;my_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;//This is an &amp;amp;str type&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&amp;amp;String can be used anywhere there is a need for &amp;amp;str. It automatically
+turns into it if the method calls for it.&lt;/p&gt;
+
+&lt;p&gt;Simple enough right? If you want to know why you can read about &lt;a href=&quot;https://doc.rust-lang.org/book/deref-coercions.html&quot;&gt;auto deref here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Thanks to &lt;a href=&quot;https://twitter.com/k0pernicus/status/736154776166109185&quot;&gt;@k0pernicus&lt;/a&gt; for suggesting to add this to the post&lt;/em&gt;&lt;/p&gt;
+
 &lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
 
 &lt;p&gt;Above are the various ways you can make a String from a &amp;amp;str and each
 serves a different purpose:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;.to_string() if you want a simple conversion&lt;/li&gt;
-  &lt;li&gt;.to_owned() if you want a simple conversion&lt;/li&gt;
+  &lt;li&gt;.to_string() if you want a simple conversion and show you’re making
+a String&lt;/li&gt;
+  &lt;li&gt;.to_owned() if you want a simple conversion and to show you’re taking
+ownership of it.&lt;/li&gt;
   &lt;li&gt;String::from() a more explicit way to say what you’re doing&lt;/li&gt;
   &lt;li&gt;String::push_str() if you need to append to a String&lt;/li&gt;
+  &lt;li&gt;format!() if you have predefined text that you wanted formatted in
+a specific way and don’t care about the speed cost&lt;/li&gt;
+  &lt;li&gt;.into() if you want a simple conversion and don’t care about the
+ambiguity of it&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;You can also easily go from a String to a &amp;amp;str:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&amp;amp;String types turn into &amp;amp;str if the method call needs it&lt;/li&gt;
+  &lt;li&gt;let my_str: &amp;amp;str = &amp;amp;my_string; if you want to explicitly specify
+a &amp;amp;str type&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;If you have a burning question that you want answered but just can’t
-seem to find the answer you need shoot me an email at
+seem to find the answer you need, shoot me an email at
 mgattozzi@gmail.com and I’ll write a post to answer your question! No
 question is stupid. Chances are if you’re having trouble with it so is
 someone else so ask away!&lt;/p&gt;
+
+&lt;p&gt;If you’re a more experienced Rust user and want to help with the wording
+or give suggestions send me a PR or reach out to me and I’ll include
+changes if they’re good. You’ll also get credit for your
+contributions of course!&lt;/p&gt;
 </description>
         <pubDate>Thu, 26 May 2016 00:00:00 -0400</pubDate>
         <link>https://mgattozzi.github.io/2016/05/26/how-do-i-str-string.html</link>
