@@ -1,0 +1,74 @@
+==================================================================
+https://keybase.io/mgattozzi
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://mgattozzi.github.io
+  * I am mgattozzi (https://keybase.io/mgattozzi) on keybase.
+  * I have a public key with fingerprint 7AEE 4DF9 1AC8 9241 8816  BE21 375D FF88 BF16 00B3
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "eldest_kid": "010143ad9a34d5fb0ff88b4486c6630b942017e2ed29e4390924051c4d787a24f9040a",
+            "fingerprint": "7aee4df91ac892418816be21375dff88bf1600b3",
+            "host": "keybase.io",
+            "key_id": "375dff88bf1600b3",
+            "kid": "010142e833f8ed050b31e1bdd8a9b851e232dfebd74a292a1dad307113d34e9dc4890a",
+            "uid": "b0ec04d6f20fe9feaae16e2d79081100",
+            "username": "mgattozzi"
+        },
+        "revoke": {
+            "sig_ids": [
+                "761c467c9cbe8239628444593891a54af5d09febe50b5c41c10265f37b5684790f"
+            ]
+        },
+        "service": {
+            "hostname": "mgattozzi.github.io",
+            "protocol": "https:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1468766839,
+    "expire_in": 157680000,
+    "prev": "d2ae5044caf958c64e53ee448f252451790b4d4cb617c4ece774b921f86a722b",
+    "seqno": 44,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v2
+
+owFtUl2IVUUcv7ul6welSAgba8r0ZLvKzJw5c2bug/sQikakJu22LHp35sx/7h52
+957rPWev6bbRgoEfi25iDwbFtmIkQrFaYaxS5JLWTYk+wHpoiaVC+6LsZUW25twK
+IpqXYWZ+X/ObGbvnrtyihmDnHwfeXZk711C7oXOdh188MoR0bPai/BDqg/oE/QaS
+tNAXGZRHmGDCPGWk8pjxrcbWCqEZEzzk3MNaMopJABQMlcA8iSVl2CchM4EIFGVW
+YoYVakM2KhWhUq5EpdTJBgqAGSuJCoVjECEI10CJF/im7mAJx1h7jtgbJxnDhdMq
+gfVR7PbcolCP9z/4f+WmIDzPCjDYd2cEiDZGKKmFT4B61FjQJmCKSqqIUcbDASGe
+8RhIEzIh67kH63IaQ4iZ4ZZiC9KCUkA4UBNILAjBOAMmUCmpAXDogaJK03jfvggN
+t6EKVOM+yIpNoqJLnaB8Nwq4q4gHoQw1COpJTgVjzJeecJX4TFnfYGejwQX3Q0ZC
+gin3rRdonwvmXC3a6bSdZTUK6+JZTf+1X1+M0t5B/Vdn5UqcxmHc7wC9aVpO8uii
+U0j3ljPKHtCFv8UKOioZ91iOUoVKEsUllCcOGaZRpk4YFwHnwpNtCJ4qRxUoRBnC
+D7jAbmRGUHWShiqXnrFQWemLkDPwPffoTFjqU+YTdwnNDAs1J0HIIIQgYFpSYgVX
+AaUaZdfbXYpRnjGXUxWdpmuwpNLBCqDhJQcbWu7ONSzKLVzQmH3j3JLFy//52xve
+b5pvvXS16dU3ajsWnl9x6NCvXa37W5ZtGbt9hYhttTun5pONamR8S//sUdu+45kL
+/PrqKxent6+bi6en1ejiL+e23zy3aWbB0ZW7epZ3/L579rdPVrz18LEf1cjlsb5n
+13XjE+WOxnvnHx3/LiVHuti24pPVLzb3/3Bctn7z/NL3zt4e+ryLjTxxelPxp/u7
+W0aSa5O8ebyn8b7mN6/eOnvj5rHrU7cmPmj8uXvDCyfeaVrG4z0dD65du3/6+Gft
+3sk1YxMPfXphzUe9nT1fX5vZOrfxl1PRA2dmXvpq4JXJ2a0HP2yfWNV8eWr1I+L0
+tyc3T748Oor6Hlv1eswPT33/9NKJzufevjRcq3184M5rj/8J
+=UZHf
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/mgattozzi
+
+==================================================================
