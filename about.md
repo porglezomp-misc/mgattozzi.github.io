@@ -11,7 +11,6 @@ Haskell in production as well as the MA National Guard as a Commo Guy.
 
 Tech Interests include:
 
-  - Ethereum/Bitcoin
   - Blockchain Technology
   - Machine Learning
   - Distributed Systems
