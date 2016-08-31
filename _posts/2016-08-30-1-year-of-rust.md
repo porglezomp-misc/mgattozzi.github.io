@@ -50,7 +50,7 @@ Klabnik's original version of the book, blog posts from pre 1.0 and the
 [Too Many Linked Lists](http://cglab.ca/~abeinges/blah/too-many-lists/book/). Multiple toolchains and multirust was alright
 but needed a lot of work. Tooling was pretty much non existent. The
 community had pushed for a 1.0 compiler and it kind of left other things
-that languages neeed by the wayside like IDEs and editor plugins, though I will
+that languages need by the wayside like IDEs and editor plugins, though I will
 say cargo was really nice and what I wished Haskell could have had at the time (I learned about stack later
 when I started my job with it). Beyond that though libraries to build
 things were sparse or didn't exist for a use case. Rust felt as a language
