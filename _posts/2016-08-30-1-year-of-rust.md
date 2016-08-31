@@ -58,6 +58,7 @@ truly like a new frontier to explore and learn from and I'm glad I made the
 decision to jump on then, but man those first few months were rough.
 
 What have we gained in the past year as a community though?
+
 - Better documentation. We now have a [docs team](https://www.rust-lang.org/en-US/team.html#Documentation-team), the [Rust Book](https://github.com/rust-lang/book)
   has been greatly improved thanks to the efforts of [Carol](https://github.com/carols10cents) and [Steve](https://github.com/steveklabnik) and
   is nearing completion, [This Week in Rust Docs](http://guillaumegomez.github.io/this-week-in-rust-docs/) covers changes that have
