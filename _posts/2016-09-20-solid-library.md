@@ -246,13 +246,92 @@ flag. Well let's take a look inside!
 
 You'll see that we have a file called Cargo.toml and a src directory
 with a file called lib.rs or main.rs if it's a binary. Not only that but
-it's also initialized as a git repository for you automatically!
+it's also initialized as a git repository for you automatically! Plus it
+includes a .gitignore file for things that Rust creates but shouldn't be
+tracked by git namely the target directory where builds and examples are
+put after being built.
 
-That's it your project is now good to go and you can begin coding.
-However, lets take the time to understand Cargo.toml and how Cargo
-works.
+That's it, your project is now good to go and you can begin coding.
+Here are the basic commands you need to use cargo:
+
+```bash
+cargo build # build your project add --release for an optimized build
+cargo run   # if your project is a binary run it after building it. 
+            # --release will optimize the build
+cargo test  # Run all tests available (doc, tests folder, and in file tests)
+cargo doc   # Run rustdoc on the project to produce beautiful
+            # documentation of your code
+cargo bench # Run benchmarks you've created and output the results
+```
+
+Now lets take the time to understand Cargo.toml which is what allows you
+to pull in dependencies and other things
 
 #### Cargo.toml
+This is your default configuration file and by default it looks
+something like this:
+
+```toml
+[package]
+name = "example"
+version = "0.1.0"
+authors = ["Michael Gattozzi <mgattozzi@gmail.com>"]
+
+[dependencies]
+```
+
+However, there's a lot of missing information that can be useful as
+metadata for crates.io and for users looking for information on your
+project. Here's an example of one of mine after having filled it out:
+
+```toml
+[package]
+name = "functils"
+version = "0.0.2"
+authors = ["Michael Gattozzi <mgattozzi@gmail.com>"]
+description = "Functions to make Rust more functional"
+license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/functils"
+homepage = "https://github.com/mgattozzi/functils"
+repository = "https://github.com/mgattozzi/functils"
+readme = "README.md"
+
+[dependencies]
+kinder = "0.1.1"
+```
+
+This lets users know a few more things about it, namely what my project
+is about, what license this code uses, where one can find documentation
+on it, what's the project's homepage if it exists, where the code
+resides, and what file is used as the README for the project. These are
+simple things to add but this provides a rich amount of information for
+my project and prospective users based off this alone. I highly
+recommend filling out the above fields for any project. There are more
+options for choosing how Cargo acts based off certain feature flags or
+certain options for building. There's a lot to digest there and
+something you should look into if you need to customize things a bit
+more. For most people the above shall suffice.
+
+Also note I specified a package under dependencies. This will grab the
+specific version from crates.io and automatically allow it to be
+imported into my project and built if I decide to use it! No fiddling
+with make files or things like that. Cargo does it for you. You can have
+a custom build script if you want or specify a git repo for your
+dependencies. All of the documentation for these features and this file
+in general resides [here]() and is well worth the read for any Rustacean.
+If you haven't read it before I'd recommend reading it before continuing
+on.
+
+#### Cargo subcommands
+One of the neat things about Cargo is that people have been able to
+build great subcommands that extend Cargo's functionality beyond just
+the basics I showed above. I'm going to highlight some that I've found
+useful to making my development of Rust code better.
+
+##### cargo-clippy
+##### cargo-check
+##### cargo-watch
+##### Subcommands List
 
 ## Build
 
