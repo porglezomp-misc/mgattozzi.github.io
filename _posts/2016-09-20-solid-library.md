@@ -34,7 +34,8 @@ for you to jump around to what you really want.
   - Stable, Beta, or Nightly?
   - rustup.rs
   - Cargo
-  - Cargo subcommands
+    - Cargo.toml 
+    - Cargo subcommands
   - External Libraries
   - Lints
   - Formatting
@@ -51,7 +52,9 @@ for you to jump around to what you really want.
   - Examples
   - Tests
   - Having a good README
+  - Having a good commit log
   - Documentation
+  - Pull Requests and enforcing standards
 - Build
   - travis-ci
     - Linux
@@ -125,7 +128,132 @@ I might have missed.
 
 ### Stable, Beta, or Nightly?
 You've got your editor setup and now you want to get started but now
-you've come to a dilema. 
+you've come to a dilemma, which version of Rust do you use? It depends
+on what you're doing. Let's look at each one:
+
+#### Stable
+- If you can help it build on Stable. It makes companies less wary of
+  your library if it's designed to build on stable.
+- You won't face regressions (and if you do you really need to report
+  this to the Rust compiler devs)
+- Any features you use have been voted upon to be stable and aren't
+  compiler features you have to turn on.
+
+Stable is by and large the best thing to build on. You'll face less
+breakage with your CI infrastructure and overall it's a more pleasant
+experience. That being said you don't get any of the cool new feature
+that are available in Nightly, but things won't break. Stable should be
+your default choice unless you absolutely need a nightly feature in
+order for things to work.
+
+#### Beta
+The often less talked about choice of the three Beta has it's benefits.
+- This version will be the next compiler version 6 weeks after the last
+  stable release
+- Allows testing of your project before the next stable release,
+  allowing you to let the compiler devs know if anything is breaking.
+- More stable than nightly
+
+Beta is best used to test that upcoming features aren't going to break
+your build. You can have it be an optional check in a CI setup so that
+you can be notified ahead of time if things will break without actually
+having it stop your builds. Beta is your safeguard against a future broken
+stable release. This is generally the only way it's used for in the Rust
+ecosystem as far as I know.
+
+#### Nightly
+This is the compiler that really lets you do things with Rust that the
+other two can't do at all. Things such as:
+- Compiler plugins
+- Custom derive (it's going to be in stable at some point)
+- Testing unstable features and library extensions
+
+Nightly really lets you unleash the power of Rust and some of the cool
+things it can do currently but it comes at a cost:
+- Nightly breaks often and easily
+- You have to peg specific versions for CI builds to maintain some
+  semblance of stability in your project
+- Some companies won't use anything that doesn't compile on stable at
+  all.
+
+This last point is problematic and one where if we want Rust to succeed
+avoiding using Nightly is best. However powerful libraries like Serde
+and Diesel need nightly to work for now, though work is going on with
+the compiler team so that these libraries can be stabilized in the
+future.
+
+#### Recap
+Good easy Rust programs use Stable if possible, Beta is used to make
+sure Stable builds don't break, and Nightly is best for features that
+need it like compiler plugins.
+
+### rustup.rs
+Alright so you've chosen which compiler to use. What about if you need
+to switch between them? How does one keep multiple versions of Rust on
+their computer? What about a specific Nightly from a specific day? Fear
+not, for we have a tool that answers all these questions. rustup.rs is
+the answer. While not at 1.0 it's still quite usable and I've been using
+it since it was announced. It's easily able to switch between versions,
+set default compilers on a per project basis, and makes it easy to
+upgrade when a new version comes out. rustup is an official project and
+will become the default way to get it installed in the future. I would
+really recommend it as it stands for your projects. You can find out how
+to install it [here](). Now before every security person comes jumping
+out of the wood works regarding the instructions for installation,
+if you're worried download the script and read it yourself before execution. If
+you're really just not happy about that solution either the source code
+is [here]() and you can build it from source yourself by downloading the
+compiler from either your distribution of choice or the official website
+[here](). Just do what works best for your situation and priorities.
+Better yet helping contribute to make it more secure would be even
+better so that we don't have to worry about these kinds of things.
+Getting PGP verification built in would be a huge boon.
+
+Some common commands to use for rustup:
+
+```bash
+rustup show #Show installed toolchains and the current active one
+rustup self update #Upgrade rustup to a new version
+rustup update #Update installed tool chains
+rustup <toolchain> install #Install a toolchain (stable, beta, or nightly)
+                           #It can also do a triplet install e.g.
+                           #stable-x86_64-unknown-linux-gnu
+rustup default #Choose youre default toolchain for projects
+rustup override set <toolchain> #Sets a specific toolchain for a directory
+```
+
+The above commands should be enough to get you started using rustup for
+your projects.
+
+### Cargo
+Alright you have everything setup for your tooling now lets get working
+on an actual project! We'll be using cargo the official Rust package
+manager. Best part is it comes with rustc when you install toolchains
+using rustup!
+
+To get started go to a directory where you want to put your project
+folder in and execute the following commands:
+
+```bash
+cargo new <your-library-name>
+# or
+cargo new <your-binary-name> --bin
+```
+
+By default cargo new creates a library project layout so if you want to
+have an executable program as your project you need to pass it the --bin
+flag. Well let's take a look inside!
+
+You'll see that we have a file called Cargo.toml and a src directory
+with a file called lib.rs or main.rs if it's a binary. Not only that but
+it's also initialized as a git repository for you automatically!
+
+That's it your project is now good to go and you can begin coding.
+However, lets take the time to understand Cargo.toml and how Cargo
+works.
+
+#### Cargo.toml
+
 ## Build
 
 ## Ship
