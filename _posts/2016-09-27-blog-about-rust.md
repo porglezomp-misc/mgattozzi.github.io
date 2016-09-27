@@ -69,7 +69,7 @@ allows you to learn more. I see no problem with that!
 presence and that you engage in some coding community of sorts. Blogging
 is perfect for that, and if your content is really great you stand out
 in the community. Take a look at burntsushi's article on
-[ripgrep](blog.burntsushi.net/ripgrep)
+[ripgrep](http://blog.burntsushi.net/ripgrep)
 a tool he wrote. It's long and detailed but it shows he has a grasp of
 what he wrote and understands other's code as well. A prospective
 employer could learn more in that article than what could be done in an
