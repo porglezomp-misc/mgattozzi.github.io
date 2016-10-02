@@ -113,7 +113,7 @@ mod tests {
 
 We don't need this for our purposes so feel free to delete it. Instead
 we're going to write two simple functions so that we can see how this
-works. One with `CStrings` and one with `i32`. First up we're going to write
+works. One with `CStr` and one with `i32`. First up we're going to write
 a function called `double_input` that takes an `i32` and doubles it. It
 should look like this:
 
@@ -154,36 +154,43 @@ is the `extern` and `#[no_mangle]` statements put into the function
 header.
 
 Okay now let's write a function that prints Strings passed to it. Since
-we're using FFI we need to use `CStrings` so that both languages know how
+we're using FFI we need to use `CStr` so that both languages know how
 to talk to the other. At the top of lib.rs add the following line:
 
 ```rust
-use std::ffi::CString;
+use std::ffi::CStr;
+use std::os::raw::c_char;
 ```
 
 Now we're going to write our printing function:
 
 ```rust
 #[no_mangle]
-pub extern fn print_string(x: CString) {
-  if let Ok(input) = x.into_string() {
-    println!("{}", input);
-  } else {
-    panic!("Unable to print input");
+pub extern fn print_string(x: *const c_char) {
+  unsafe {
+    let cstring = CStr::from_ptr(x);
+    if let Ok(input) = x.to_str() {
+      println!("{}", input);
+    } else {
+      panic!("Unable to print input");
+    }
   }
 }
 ```
 
 Like before we write out our `#[no_mangle]` and `pub extern` so that the
 function will be exported. We've also stated that our input is
-a `CString`. Because a `CString` isn't like a Rust `String` we need to turn it
-into one if we want it to be able to print. This is why we use the
-`into_string()` function. However, this has the possibility of failure. If
-the program making the `CString` fails in making it properly then we won't
-be able to turn it into a Rust String. This is why `into_string()` returns
+a pointer to what we'll turn into a `CStr`. Because a `CStr` isn't like a Rust
+`String` we need to turn it into one if we want it to be able to print. This is
+why we use the `to_str()` function. However, this has the possibility of failure. If
+the program making the `CStr` fails in making it properly then we won't
+be able to turn it into a Rust String. This is why `to_str()` returns
 a `Result` type. If it's translated fine we'll print out the input string
 and if not we panic and cause the program to abort because it failed in
-some manner.
+some manner. We also have to wrap it in an unsafe because we're messing
+around with raw pointers. While this is classified as unsafe by Rust we
+can be pretty sure that the Haskell code will generate a correct `CString`
+for us to use so wrapping it in `unsafe` here is alright.
 
 All right so we have our two functions we want to use in Haskell setup.
 I want to talk about what we're going to be doing with the Haskell code
