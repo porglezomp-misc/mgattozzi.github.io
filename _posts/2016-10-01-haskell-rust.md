@@ -114,7 +114,7 @@ mod tests {
 
 We don't need this for our purposes so feel free to delete it. Instead
 we're going to write two simple functions so that we can see how this
-works. One with Strings and one with `i32`. First up we're going to write
+works. One with `CStrings` and one with `i32`. First up we're going to write
 a function called `double_input` that takes an `i32` and doubles it. It
 should look like this:
 
@@ -158,13 +158,13 @@ Okay now let's write a function that prints Strings passed to it. Since
 we're using FFI we need to use `CStrings` so that both languages know how
 to talk to the other. At the top of lib.rs add the following line:
 
-```
+```rust
 use std::ffi::CString;
 ```
 
 Now we're going to write our printing function:
 
-```
+```rust
 #[no_mangle]
 pub extern fn print_string(x: CString) {
   if let Ok(input) = x.into_string() {
