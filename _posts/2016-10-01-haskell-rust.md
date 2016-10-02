@@ -12,7 +12,7 @@ projects, on larger ones it can get in the way. Commonly with Haskell,
 if one really needed speed, the FFI would be used with C code in order
 to get the performance needed. The only problem with that is that C is
 unsafe with undefined behavior being the norm. This is where Rust is
-great alternative C for those performance critical functions needed in
+a great alternative C for those performance critical functions needed in
 some Haskell problems. If you've ever used Haskell before you know that
 the documentation is either outdated, unrelated to what you actually
 want, or just plain missing. I spent hours digging through old Haskell and
@@ -32,7 +32,6 @@ This articles assumes you have the following installed:
 - cargo
 - cabal
 - GHC
-- make
 
 Why not stack? It kept yelling at me for weird things. I like it but
 this is a simple example and cabal will suffice. Besides stack is built
