@@ -89,12 +89,12 @@ example working with dylib or the new cdylib format for Rust and would love to
 know how if you've done it before. The three new lines added let Rust
 know a few things:
 
-1) The output file will be a .a file called librusty.a (The common
+1. The output file will be a .a file called librusty.a (The common
 convention for C code that's a library to start with lib and then the
 name of the project).
-2) This file can get statically linked into other programs because we've
+2. This file can get statically linked into other programs because we've
 defined it to be a static lib.
-3) It knows how to setup the file differently with it's symbols for
+3. It knows how to setup the file differently with it's symbols for
 other programs. Rust normally uses .rlib files to link Rust code to
 other Rust code when you pull in external dependencies with Cargo. We
 don't want that since Haskell would have no idea how to understand that
@@ -127,12 +127,12 @@ pub extern fn double_input(x: i32) -> i32 {
 
 Let's go through each line:
 
-1) The #[no_mangle] tells the Rust compiler not to do anything weird
+1. The `#[no_mangle]` tells the Rust compiler not to do anything weird
 with the symbols of this function when compiled because we need to be
 able to call it from other languages. This is needed if you plan on
 doing any FFI. Not doing so means you won't be able to reference it in
 other languages
-2) Now our actual function header. `pub` makes it available to use
+2. Now our actual function header. `pub` makes it available to use
 elsewhere. `extern` means this is externally available outside our
 library and tells the compiler to follow the C calling convention when
 compiling. If you don't know what that means, it has to do with how code
@@ -145,7 +145,7 @@ it's calling C compiled code and not Rust. Now we finish with the rest
 of the function. `fn` tells us this is a function we are declaring,
 `double_input` is the function name `(x: i32)` means it has an input `x` of
 type `i32` and `-> i32` means we are returning an `i32`.
-3) Our next line is simple take `x` and multiply it by 2. Since it's the
+3. Our next line is simple take `x` and multiply it by 2. Since it's the
 last line in the Rust function by omitting the ; at the end we're
 telling the compiler return the value of the expression, much like how
 the last expression of a `do` block in Haskell returns a value.
@@ -182,7 +182,7 @@ into one if we want it to be able to print. This is why we use the
 `into_string()` function. However, this has the possibility of failure. If
 the program making the `CString` fails in making it properly then we won't
 be able to turn it into a Rust String. This is why `into_string()` returns
-a Result Type. If it's translated fine we'll print out the input string
+a `Result` type. If it's translated fine we'll print out the input string
 and if not we panic and cause the program to abort because it failed in
 some manner.
 
@@ -317,7 +317,7 @@ Take a look at the second line though. Notice how I put unsafe? We need
 this because of how `CStrings` work for one in Haskell (I couldn't get
 anything to print if I didn't put unsafe) but two we are doing an IO
 action. Unlike `doubleInput` this function isn't pure and we have side
-effects (printing out a line) and so we need this to be in the IO monad
+effects (printing out a line) and so we need this to be in the `IO` monad
 for it to work. Even if your input might be a `CInt` for another function
 you write, if you implement any kind of IO with that function import it
 with an unsafe call so that it's enforced that way in Haskell. Unlike
@@ -358,8 +358,8 @@ main :: IO ()
 This is our function declaration. Every executable has a main function
 with a return type of of `IO ()`. Essentially we're saying this program
 has side effects (because we are running a program on a computer) and it
-returns the unit type `()` upon completion wrapped up in the IO monad.
-If that was complete gibberish then just know that IO is there to tell
+returns the unit type `()` upon completion wrapped up in the `IO` monad.
+If that was complete gibberish then just know that `IO` is there to tell
 the compiler we're doing stuff that affects the computer and it needs to
 properly keep track of it.
 
@@ -455,7 +455,7 @@ If you want to take a look at the code I've put it up in a repository
 setup a project to use Rust inside of Haskell code. While this was
 fairly simple to setup and do in terms of the overall code it still took
 some work. It also covered the proper ways to call the code inside of
-Rust. I've started a package to automate the process in
+Rust. I've started a [project](https://github.com/mgattozzi/curryrs) to automate the process in
 Rust and Haskell projects so the need to write all the boiler plate
 yourself is unnecessary. It'll also provide mappings between the various
 types in Rust and Haskell to make it easier to reason about. This will
