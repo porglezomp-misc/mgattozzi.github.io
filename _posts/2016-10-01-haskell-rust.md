@@ -114,8 +114,8 @@ mod tests {
 
 We don't need this for our purposes so feel free to delete it. Instead
 we're going to write two simple functions so that we can see how this
-works. One with Strings and one with i32. First up we're going to write
-a function called double_input that takes an i32 and doubles it. It
+works. One with Strings and one with `i32`. First up we're going to write
+a function called `double_input` that takes an `i32` and doubles it. It
 should look like this:
 
 ```rust
@@ -177,7 +177,7 @@ pub extern fn print_string(x: CString) {
 
 Like before we write out our `#[no_mangle]` and `pub extern` so that the
 function will be exported. We've also stated that our input is
-a `CString`. Because a `CString` isn't like Rust Strings we need to turn it
+a `CString`. Because a `CString` isn't like a Rust `String` we need to turn it
 into one if we want it to be able to print. This is why we use the
 `into_string()` function. However, this has the possibility of failure. If
 the program making the `CString` fails in making it properly then we won't
