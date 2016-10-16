@@ -7,7 +7,8 @@ permalink: /about/
 
 My name is Michael Gattozzi. I'm a CS Undergrad at Umass Boston. I work
 at a Financial Tech Startup called Elsen, Inc. where I get to write
-Haskell in production as well as the MA National Guard as a Commo Guy.
+Haskell in production! In my spare time I write a lot Rust code and
+lately I've been bridging the gap between the two.
 
 Tech Interests include:
 
