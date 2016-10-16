@@ -13,7 +13,7 @@ being that we need to initialize and end the Haskell runtime when we use
 our Haskell functions and closing it when we're done. Linking libraries
 also ended up being a problem to overcome to get it done right. It is
 possible though! We're going to setup a program from scratch and we're
-going to use curryrs to make the types easier between the two.
+going to use `curryrs` to make the types easier between the two.
 
 ### Tooling
 This articles assumes you have the following installed:
@@ -72,7 +72,7 @@ foreign export ccall triple :: I32 -> I32
 We're importing the types from `curryrs` which contain aliases
 for all of the types making it easier to write code between both
 languages. In this case we're using the `I32` type which is `i32` in Rust
-and `Int32` in Haskell. We've also defined a function triple that takes
+and `Int32` in Haskell. We've also defined a function `triple` that takes
 a value and multiplies it by 3. We've then exported it with the
 C calling convention for use in other languages.
 
@@ -155,20 +155,20 @@ source-repository head
 ```
 
 The important things to note here are that we need to set
-other-extensions to have the `ForeignFunctionInterface` used for GHC.
+`other-extensions` to have the `ForeignFunctionInterface` used for GHC.
 Also look at the flags used:
 
-- dynamic tells GHC that we want a dynamic library
-- fPIC is also necessary because of the need for Position Independent Code
-- lHSrst-ghc8.0.1 is telling GHC to link in the rst library which we
+- `-dynamic` tells GHC that we want a dynamic library
+- `-fPIC` is also necessary because of the need for Position Independent Code
+- `-lHSrst-ghc8.0.1` is telling GHC to link in the rst library which we
   need for our code to work in other places. It's tied to the version of
   the compiler you use. Just change the last few numbers to the version
   you're using for this to work. However, at the time of writing
   I haven't tested this against other versions.
-- o libhs.so is just telling the compiler to stick it in the output file
-  libhs.so in the main top of the library directory. This is nice for
+- `-o libhs.so` is just telling the compiler to stick it in the output file
+  `libhs.so` in the main top of the library directory. This is nice for
   reproducible builds in our code rather than digging through
-  .stack-work for the library.
+  `.stack-work` for the library.
 
 Okay one last thing for the code to work. Open up stack.yaml and change
 the line extra-deps to the following:
@@ -177,7 +177,7 @@ the line extra-deps to the following:
 extra-deps: [ "curryrs-0.1.1.0" ]
 ```
 
-This is so we can import the curryrs library since it's only on Hackage
+This is so we can import the `curryrs` library since it's only on Hackage
 and not in the current stack LTS.
 
 Now you can compile your code:
@@ -219,7 +219,7 @@ Haskell runtime in Rust easier to do. Alright now let's write some Rust!
 
 ### Rust
 First up open up Cargo.toml and change it to have a build file and to
-add curryrs as a dependency:
+add `curryrs` as a dependency:
 
 ```toml
 [package]
@@ -245,8 +245,8 @@ fn main() {
 
 This tells cargo that Rust needs to look inside `hs2rs` for our
 `inter.so` and  `libhs.so` files! When we import them now we don't need
-to specify the link specifically in the file. Alright we're finally
-ready to get our main file all setup. Open up `src/main.rs` and change
+to specify which files need to be linked specifically in the file. Alright
+we're finally ready to get our main file all setup. Open up `src/main.rs` and change
 it to look like this:
 
 ```rust
@@ -267,7 +267,7 @@ fn main() {
 
 ```
 
-We're first importing the `I32` type from curryrs. We then import our
+We're first importing the `I32` type from `curryrs`. We then import our
 functions we created earlier. This includes our initialization and
 exiting functions for the Haskell run time. These are absolutely
 necessary or the code won't work. Failure to close the runtime would be
@@ -324,12 +324,12 @@ flags done right now.
 This is only the most basic of examples. I'm still unsure of the best
 practices of getting data structures passed between the two. If you have
 examples of passing them between Rust and Haskell let me know! It would
-be great if Curryrs could support passing more complex data rather than
+be great if `curryrs` could support passing more complex data rather than
 just basic primitives.
 
 ### Conclusion
 I've walked you through the basics of using Haskell in Rust. This
-includes the setup of your project, a little on how to use Curryrs, how
+includes the setup of your project, a little on how to use `curryrs`, how
 to setup the C files you'll need to interface with Rust and how to
 export functions for use in other languages. I've also shown you how to
 setup your Rust project, what you would need to include in a build
@@ -338,7 +338,7 @@ also covered a basic Makefile you can use to make it easier to build the
 dependencies for your Rust code.
 
 I'm hoping that examples like this will allow Rust users in the future
-to leverage the power Haskell has such as infinite lists in their code
+to leverage the power Haskell has, such as infinite lists, in their code
 or vice versa and allowing Haskell to have a type safe fast language
 when speed truly is critical.
 
